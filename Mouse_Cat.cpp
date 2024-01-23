@@ -4,7 +4,6 @@
 #include <cmath>
 #include <string>
 #include <atomic>
-// Funcion para limpiar pantalla en windows o linux, que se adapte
 #ifdef _WIN32
 #include <conio.h>
 #include <windows.h>
@@ -50,16 +49,16 @@ void catThreadFunction(Animal& cat) {
 
     char c = getch();
     if (c == 'a') {
-      if(cat.x >= 0) continue;
+      if(cat.x > 0)
         cat.x -= 1;
     } else if (c == 'd') {
-      if(cat.x <= 99) continue;
+      if(cat.x < 99)
         cat.x += 1;
     } else if (c == 'w') {
-      if(cat.y <= 99) continue;
+      if(cat.y < 99)
         cat.y += 1;
     } else if (c == 's') {
-      if(cat.y >= 0) continue;
+      if(cat.y > 0)
         cat.y -= 1;
     }
 
@@ -90,7 +89,7 @@ void mouseThreadFunction(Animal& mouse, const Animal& cat) {
 int main()
 {
   CLEAR_SCREEN();
-  Animal cat = {0, 0, 1};
+  Animal cat = {1, 1, 1};
   Animal mouse = {50, 50, -1};
 
   std::thread catThread(catThreadFunction, std::ref(cat));
