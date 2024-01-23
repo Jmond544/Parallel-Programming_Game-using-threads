@@ -1,8 +1,27 @@
+
+
+
 # Game that use threads
 
 - `Student:` Mondalgo Tapia, Juan Carlos.
 - `Course:` Parallel programming.
 - `University:` UNMSM.
+
+## Tabla de contenidos:
+
+- [Game that use threads](#game-that-use-threads)
+	- [Tabla de contenidos:](#tabla-de-contenidos)
+	- [Introduction](#introduction)
+	- [Requirements](#requirements)
+	- [How to run](#how-to-run)
+		- [2. Constants:](#2-constants)
+		- [3. Atomic Flag](#3-atomic-flag)
+		- [4. Animal Structure](#4-animal-structure)
+		- [5. Distance Calculation Function](#5-distance-calculation-function)
+		- [6. Utility Function for Formatting Digits](#6-utility-function-for-formatting-digits)
+		- [7. Cat Thread Function](#7-cat-thread-function)
+		- [8. Mouse Thread Function](#8-mouse-thread-function)
+		- [9. Main Function](#9-main-function)
 
 ## Introduction
 This game is a simple console-based game where a cat is trying to catch a mouse on a two-dimensional board. The game uses threads to simulate the concurrent movement of the cat and the mouse. The game board has a size of 100x100, and the cat and mouse are represented by the `Animal` struct.
@@ -10,6 +29,9 @@ This game is a simple console-based game where a cat is trying to catch a mouse 
 ## Requirements
 - C++ compiler
 - conio.h library
+
+> [!NOTE]
+> The code uses platform-specific functions like `gotoxy` and `getch`, which might not be available on all systems. Depending on the environment, you might need to adjust these parts for it to work correctly on your system.
 
 ## How to run
 - Clone the repository
