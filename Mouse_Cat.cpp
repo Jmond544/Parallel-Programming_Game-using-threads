@@ -3,8 +3,27 @@
 #include <conio.h>
 #include <cmath>
 #include <string>
+#include <atomic>
+// Funcion para limpiar pantalla en windows o linux, que se adapte
+#ifdef _WIN32
+#include <conio.h>
+#include <windows.h>
+#define CLEAR_SCREEN() std::system("cls")
+#else
+#include <cstdlib>
+#define CLEAR_SCREEN() std::system("clear")
+#endif
 
-bool finished = false;
+const int BOARD_SIZE = 100;
+const double DISTANCE_THRESHOLD = 2.0;
+
+std::atomic<bool> finished(false);
+
+struct Animal
+{
+  int x, y;
+  int direction;
+};
 
 double distance(int x1, int y1, int x2, int y2)
 {
@@ -13,37 +32,17 @@ double distance(int x1, int y1, int x2, int y2)
 
 std::string twoDigits(int n)
 {
-  if (n < 10) {
+  if (n < 10)
+  {
     return "0" + std::to_string(n);
-  } else {
+  }
+  else
+  {
     return std::to_string(n);
   }
 }
 
-
-int main()
-{
-  struct Cat
-  {
-    int x, y;
-    int direction;
-  };
-  Cat cat;
-  cat.x = 0;
-  cat.y = 0;
-  cat.direction = 1;
-  struct Mouse
-  {
-    int x, y;
-    int direction;
-  };
-  Mouse mouse;
-  mouse.x = 50;
-  mouse.y = 50;
-  mouse.direction = -1;
-
-  std::thread catThread([&]
-                        {
+void catThreadFunction(Animal& cat) {
   while (!finished) {
 
     gotoxy(10, 10);
@@ -51,30 +50,30 @@ int main()
 
     char c = getch();
     if (c == 'a') {
-      if(cat.x == 0) continue;
-      cat.x -= 1;
+      if(cat.x >= 0) continue;
+        cat.x -= 1;
     } else if (c == 'd') {
-      if(cat.x == 99) continue;
-      cat.x += 1;
+      if(cat.x <= 99) continue;
+        cat.x += 1;
     } else if (c == 'w') {
-      if(cat.y == 99) continue;
-      cat.y += 1;
+      if(cat.y <= 99) continue;
+        cat.y += 1;
     } else if (c == 's') {
-      if(cat.y == 0) continue;
-      cat.y -= 1;
+      if(cat.y >= 0) continue;
+        cat.y -= 1;
     }
 
-  } });
+  }
+}
 
-  std::thread mouseThread([&]
-                          {
+void mouseThreadFunction(Animal& mouse, const Animal& cat) {
   while (!finished) {
     mouse.x += mouse.direction;
-    if (mouse.x <= 0 || mouse.x >= 99) {
+    if (mouse.x <= 0 || mouse.x > BOARD_SIZE) {
       mouse.direction *= -1;
     }
 
-    if (distance(cat.x, cat.y, mouse.x, mouse.y) < 2.0) {
+    if (distance(cat.x, cat.y, mouse.x, mouse.y) < DISTANCE_THRESHOLD) {
         gotoxy(10, 15);
         std::cout << "¡El gato ha atrapado al ratón!" << std::endl;
         finished = true;
@@ -84,8 +83,19 @@ int main()
     gotoxy(10, 5);
     std::cout << "Ratón: " << twoDigits(mouse.x) << ", " << twoDigits(mouse.y) << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  } });
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  }
+}
+
+int main()
+{
+  CLEAR_SCREEN();
+  Animal cat = {0, 0, 1};
+  Animal mouse = {50, 50, -1};
+
+  std::thread catThread(catThreadFunction, std::ref(cat));
+
+  std::thread mouseThread(mouseThreadFunction, std::ref(mouse), std::ref(cat));
 
   catThread.join();
   mouseThread.join();
